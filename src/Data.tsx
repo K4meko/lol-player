@@ -1,37 +1,50 @@
 import {useState, useEffect, useRef} from "react";
 import jsonData from "./ESPORTSTMNT01_1425089.json";
 import ReactPlayer from "react-player/lazy";
+import {GameData} from "./types";
 
 type JsonData = {
-  Events: any;
+  Events: [GameData];
 };
 
-export const GameData = () => {
+export const Data = () => {
   const [videoTime, setVideoTime] = useState<number>(0);
+  const [gameTimes, setGameTimes] = useState<number[]>([]);
   const [data, setData] = useState<JsonData | null>(null);
   const playerRef = useRef<ReactPlayer>(null);
+  const getDuration = () => {
+    if (playerRef.current) {
+      const currentDuration = playerRef.current.getDuration();
+      if (currentDuration !== null) {
+        return currentDuration;
+      }
+    }
+    return 0;
+  };
+
+  const getAllGameTimes = (gameDataArray: GameData[]): number[] => {
+    return gameDataArray.map(gameData => gameData.gameTime);
+  };
   useEffect(() => {
     if (jsonData) {
       setData(jsonData as JsonData);
+      if (data?.Events) {
+        setGameTimes(getAllGameTimes(data.Events));
+        console.log("Game times:", gameTimes);
+      }
     }
-    console.log(jsonData);
+    //console.log(jsonData);
   }, []);
 
   useEffect(() => {
     console.log("Current time:", videoTime);
   }, [videoTime]);
-  const handleProgress = (state: {playedSeconds: number}) => {
+
+  //@ts-ignore
+  const handleProgress = state => {
     setVideoTime(state.playedSeconds);
   };
 
-  const handlePause = () => {
-    if (playerRef.current) {
-      if (playerRef.current.getCurrentTime() > videoTime) {
-        const currentTime = playerRef.current.getCurrentTime();
-        setVideoTime(currentTime);
-      }
-    }
-  };
   return (
     <div>
       <pre className="whitespace-pre-wrap text-white">
@@ -40,7 +53,7 @@ export const GameData = () => {
       <ReactPlayer
         ref={playerRef}
         controls={true}
-        url="https://www.youtube.com/watch?v=0bhFagWP_W0"
+        url="https://www.youtube.com/watch?v=HtQsIeXyUjo"
         onProgress={handleProgress}
       />
       <pre className="whitespace-pre-wrap"></pre>
