@@ -3,7 +3,7 @@ interface Stats {
   value: number;
 }
 
-interface Participant {
+export type Participant = {
   participantID: number;
   accountID: number;
   championName: string;
@@ -55,7 +55,7 @@ interface Participant {
   spell2: number;
   spell1: number;
   pickMode: number;
-}
+};
 
 interface Team {
   towerKills: number;

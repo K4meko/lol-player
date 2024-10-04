@@ -1,7 +1,7 @@
 import {useState, useEffect, useRef} from "react";
 import jsonData from "./ESPORTSTMNT01_1425089.json";
 import ReactPlayer from "react-player/lazy";
-import {GameData} from "./types";
+import {GameData, Participant} from "./types";
 
 type JsonData = {
   Events: [GameData];
@@ -22,17 +22,13 @@ export const Data = () => {
     return 0;
   };
 
-  const getAllGameTimes = (gameDataArray: GameData[]): number[] => {
-    return gameDataArray.map(gameData => gameData.gameTime);
-  };
   useEffect(() => {
     if (jsonData) {
       setData(jsonData as JsonData);
-      if (data?.Events) {
-        setGameTimes(getAllGameTimes(data.Events));
-        console.log("Game times:", gameTimes);
-      }
+      //@ts-ignore
+      console.log(getParticipantsWithTimestamps(jsonData.Events)[131]);
     }
+
     //console.log(jsonData);
   }, []);
 
@@ -44,7 +40,17 @@ export const Data = () => {
   const handleProgress = state => {
     setVideoTime(state.playedSeconds);
   };
-
+  const getParticipantsWithTimestamps = (
+    gameDataArray: GameData[]
+  ): {timestamp: number; participants: Participant[]}[] => {
+    return gameDataArray.map(gameData => {
+      //   console.log("GameData:", gameData); // Log each GameData object
+      return {
+        timestamp: gameData.gameTime,
+        participants: gameData.participants,
+      };
+    });
+  };
   return (
     <div>
       <pre className="whitespace-pre-wrap text-white">
